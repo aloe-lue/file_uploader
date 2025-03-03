@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('../titleView/title', { title }) %>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- dont show an error if user not logged in -->
+    <% if (currentUser) {%>
+    <script src="js/script.js" defer></script>
+    <% } %>
+  </head>
+  <body>
+    <div class="main_content">
+      <header>
+        <div class="main_header">
+          <div class="logos"><h1><%= logos %></h1></div>
+        </div>
+      </header>
+
+      <main class="main_main">
+        <!-- a sign up form for ya  -->
+        <div class="errors">
+          <div>
+            <% if (currentUser) { %>
+            <!-- greet logged user -->
+            <%- include('./greetView/greet') %>
+
+            <!-- log out user -->
+            <%- include('./logOutView/logOut') %>
+
+            <!-- include button for adding files -->
+            <%- include('./uploadFileView/uploadFile.ejs') %>
+
+            <!-- create folder form -->
+            <%- include('./createFolderView/createFolder') %>
+
+            <!-- add comment for offsets -->
+            <% } else { %>
+            <ul>
+              <!-- show user error when creating an account -->
+              <% errors.map((error) => { %>
+              <li><%= error.msg %></li>
+              <% }) %>
+            </ul>
+            <h2>create account or log in <a href="/log-in">here</a></h2>
+            <%- include('./signUpView/signUp') %> <% } %>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
