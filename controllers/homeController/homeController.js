@@ -2,12 +2,22 @@ const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 const bcryptjs = require("bcryptjs");
 const db = require("../../prisma/query");
+const multer = require("multer");
+const path = require("node:path");
+const fs = require("node:fs");
+// test package
+const Mimetics = require("mimetics");
 
-// you want home
+/**
+ * renders the homepage
+ * @param {*} req
+ * @param {*} res
+ */
 exports.home = (req, res) => {
   res.render("homeView/home", {
-    title: "f_uplo",
-    logos: "f_uplo",
+    fileError: "",
+    title: "i_uplo",
+    logos: "i_uplo",
     errors: [],
     openDialog: 0,
   });
@@ -78,22 +88,23 @@ const signUpValidationChain = [
     })
     .withMessage(`confirm password ${confirmPassword}`),
 ];
-
 exports.signUp = [
   signUpValidationChain,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
 
+    // render the same place when error occurs and show errors
     if (!errors.isEmpty()) {
       res.status(400).render("homeView/home", {
-        title: "f_uplo",
-        logos: "f_uplo",
+        title: "i_uplo",
+        logos: "i_uplo",
         errors: errors.array(),
         openDialog: 0,
       });
     }
 
     const { firstName, lastName, username, email, password } = req.body;
+    // i used bcrypt js it's hard to configure bcrypt from c++ technically it's way faster that's why it's preferre
     const hashedPassword = await bcryptjs.hash(password, 10);
     await db.createUser({
       firstName: firstName,
@@ -106,25 +117,92 @@ exports.signUp = [
   }),
 ];
 
+/*
+ * that is cloudinary choice
+ * The maximum image file size for the free plan is 10 MB.
+ */
+
+// set upload limitation for the curr project
+const limits = {
+  headerPairs: 2000,
+  fileSize: 1_000_000 * 10, // <= 10 mb
+  fields: 100,
+  parts: 100,
+  files: 100,
+};
+
+// you want a better file filter in a real application tho
+// file path => path.join(__dirname, "storage")
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "storage"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${file.originalname}`);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: limits,
+}).single("upload_file");
+
+exports.postFileUpload = (req, res) => {
+  upload(req, res, async function (err) {
+    if (err) {
+      res.status(400).render("homeView/home", {
+        fileError: "yeah right this thing doesn't support more than 1 file",
+        errors: [],
+        logos: "i_uplo",
+        title: "i_uplo",
+      });
+    }
+
+    const mimetics = new Mimetics();
+    const filePath = req.file.path;
+    const buffer = fs.readFileSync(filePath);
+    const type = await mimetics.parseAsync(buffer);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+    if (!allowedTypes.includes(type.mime)) {
+      // delete the file, render to safe route
+      fs.rmSync(req.file.path);
+      return res.status(400).render("homeView/home", {
+        fileError: "file Should be an image such as jpeg, png, gif and webp",
+        errors: [],
+        logos: "i_uplo",
+        title: "i_uplo",
+      });
+    }
+
+    // file uploaded info
+    const {
+      // fieldname,
+      originalname,
+      // encoding,
+      // mimetype,
+      // destination,
+      // filename,
+      path,
+      size,
+    } = req.file;
+    await db.addFileToUser({
+      name: originalname,
+      url: path,
+      size: size,
+      uploadedAt: new Date(),
+      userId: req.user.id,
+    });
+    res.redirect("/");
+  });
+};
+
 const emptyFolderName = "should not be left empty";
 const folderLimit = "should be between 3 to 255 in length";
-const folderExist = "already exist";
 
 const folderNameValidationChain = [
   body("folderName")
     .trim()
-    .custom(async (value, { req }) => {
-      const { id } = req.user;
-      const folder = await db.findUniqueFolder({
-        folderName: value,
-        userId: Number(id),
-      });
-
-      if (folder) {
-        throw new Error("folder exist");
-      }
-    })
-    .withMessage(`folder name ${folderExist}`)
     .notEmpty()
     .withMessage(`folder name ${emptyFolderName}`)
     .isLength({ min: 3, max: 255 })
@@ -136,10 +214,12 @@ exports.postCreateFolder = [
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
 
+    // todo: show a different error with property for the create validation
     if (!errors.isEmpty()) {
       return res.status(400).render("homeView/home", {
-        title: "f_uplo",
-        logos: "f_uplo",
+        fileError: "",
+        title: "i_uplo",
+        logos: "i_uplo",
         errors: errors.array(),
         openDialog: 1,
       });
