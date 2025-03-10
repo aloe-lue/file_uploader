@@ -16,39 +16,61 @@
     <div class="main_content">
       <header>
         <div class="main_header">
-          <div class="logos"><h1><%= logos %></h1></div>
+          <div class="logos">
+            <h1><%= logos %></h1>
+          </div>
         </div>
       </header>
 
+      <%- include('../folderActDialogView/folderActDialog', { folderError }) %>
+
       <main class="main_main">
         <!-- a sign up form for ya  -->
-        <div class="errors">
-          <div>
-            <% if (currentUser) { %>
-            <!-- greet logged user -->
-            <%- include('./greetView/greet') %>
+        <% if (currentUser) { %>
 
+        <div class="main_container">
+          <div class="add_folder_or_file">
+            <button class="add_btn">Add</button>
+
+            <dialog class="show_on_add">
+              <div class="action">
+                <button class="close">x</button>
+                <button class="create_folder">Create Folder</button>
+                <button class="upload_file">Upload File</button>
+              </div>
+            </dialog>
+          </div>
+          <div class="user_content">
+            <!-- greet logged user -->
+            <%- include('../greetView/greet') %>
             <!-- log out user -->
-            <%- include('./logOutView/logOut') %>
+
+            <!-- show dialog based on user action -->
+            <!-- client shows what?? create folder dialog and upload file -->
 
             <!-- include button for adding files -->
-            <%- include('./uploadFileView/uploadFile.ejs') %>
+            <%- include('../uploadFileView/uploadFile.ejs') %>
 
             <!-- create folder form -->
-            <%- include('./createFolderView/createFolder') %>
+            <%- include('../createFolderView/createFolder') %>
 
-            <!-- add comment for offsets -->
-            <% } else { %>
-            <ul>
-              <!-- show user error when creating an account -->
-              <% errors.map((error) => { %>
-              <li><%= error.msg %></li>
-              <% }) %>
-            </ul>
-            <h2>create account or log in <a href="/log-in">here</a></h2>
-            <%- include('./signUpView/signUp') %> <% } %>
+            <!-- this views the user files -->
+            <%- include('../userFileView/userFile') %>
+
+            <!-- this views the folder files -->
+            <%- include('../readFolderView/readFolder') %>
+            <!--  -->
           </div>
         </div>
+        <% } else { %>
+
+        <ul>
+          <!-- show user error when creating an account -->
+          <% errors.map((error) => { %>
+          <li><%= error.msg %></li>
+          <% }) %>
+        </ul>
+        <%- include('../signUpView/signUp') %> <% } %>
       </main>
     </div>
   </body>
