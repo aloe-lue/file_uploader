@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('../titleView/title', { title }) %>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="main_content">
+      <header>
+        <div class="main_header">
+          <div class="logos"><h1><%= logos %></h1></div>
+        </div>
+      </header>
+
+      <main class="main_main">
+        <% if (currentUser) { %>
+        <div>
+          <p>
+            user #=> <%= currentUser.firstName %> <%= currentUser.lastName %> is
+            logged in or should i call you <%= currentUser.username %> or are
+            you lost? get back then <a href="/">here</a>
+          </p>
+        </div>
+        <% } else { %>
+        <div class="errors">
+          <ul>
+            <% errors.map((error) => { %>
+            <li><%= error.msg %></li>
+            <% }) %>
+          </ul>
+        </div>
+        <%- include('../logInFormView/logInForm') %> <% } %>
+      </main>
+    </div>
+  </body>
+</html>
