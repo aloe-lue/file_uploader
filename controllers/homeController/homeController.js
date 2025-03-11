@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+const { body, param, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 const bcryptjs = require("bcryptjs");
 const db = require("../../prisma/query");
@@ -7,6 +7,7 @@ const path = require("node:path");
 const fs = require("node:fs");
 // test package
 const Mimetics = require("mimetics");
+const { format, formatISO } = require("date-fns");
 
 /**
  * renders the homepage
@@ -20,6 +21,7 @@ exports.home = (req, res) => {
     logos: "i_uplo",
     errors: [],
     openDialog: 0,
+    folderError: [],
   });
 };
 
@@ -188,9 +190,9 @@ exports.postFileUpload = (req, res) => {
     } = req.file;
     await db.addFileToUser({
       name: originalname,
-      url: path,
+      url: `${path}${crypto.randomUUID()}`,
       size: size,
-      uploadedAt: new Date(),
+      uploadedAt: new Date(format(new Date(), "yyyy-MM-dd hh:mm")),
       userId: req.user.id,
     });
     res.redirect("/");
@@ -229,7 +231,88 @@ exports.postCreateFolder = [
      */
     const { id } = req.user;
     const { folderName } = req.body;
-    await db.createFolder({ folderName: folderName, userId: Number(id) });
+    await db.createFolder({
+      folderName: folderName,
+      userId: Number(id),
+      dateTime: new Date(format(new Date(), "yyyy-MM-dd hh:mm")),
+    });
+    res.redirect("/");
+  }),
+];
+
+const folderId = "should not be left empty";
+const folderName = "should not be left empty";
+
+const updateFolderVc = [
+  body("folderNameAct")
+    .trim()
+    .notEmpty()
+    .withMessage(`foldername ${folderName}`),
+  body("folderIdAct").trim().notEmpty().withMessage(`folderId ${folderId}`),
+  body("folderRename")
+    .trim()
+    .notEmpty()
+    .withMessage(`folderRename ${folderName}`),
+];
+
+exports.postUpdateFolder = [
+  updateFolderVc,
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+
+    // that is if there was an error validating client forms
+    if (!errors.isEmpty()) {
+      return res.status(400).render("homeView/home", {
+        logos: "i_uplo",
+        title: "i_uplo",
+        folderError: errors.array(),
+        errors: [],
+      });
+    }
+
+    await db.updateFolder({
+      folderRename: req.body.folderRename,
+      folderName: req.body.folderNameAct,
+      id: Number(req.body.folderIdAct),
+      userId: Number(req.user.id),
+    });
+    res.redirect("/");
+  }),
+];
+
+const idNec = "should be not be left empty";
+const folderNameEmpty = "shouldn't be left empty";
+
+const deleteFolderVc = [
+  param("id").trim().notEmpty().withMessage(`Id #=> ${idNec}`),
+  param("folderName")
+    .trim()
+    .notEmpty()
+    .withMessage(`folderName ${folderNameEmpty}`),
+];
+
+exports.postDeleteFolder = [
+  deleteFolderVc,
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("homeView/home", {
+        // this should be global but i think that would be a bad idea
+        logos: "i_uplo",
+        title: "i_uplo",
+        folderError: errors.array(),
+        errors: [],
+        fileError: [],
+      });
+    }
+
+    // tell db delete this folder with this info
+    await db.deleteFolder({
+      folderName: req.params.folderName,
+      id: Number(req.params.id),
+      userId: Number(req.user.id),
+    });
     res.redirect("/");
   }),
 ];
