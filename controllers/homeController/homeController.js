@@ -22,6 +22,7 @@ exports.home = (req, res) => {
     errors: [],
     openDialog: 0,
     folderError: [],
+    folderErrorUpdate: [],
   });
 };
 
@@ -119,86 +120,6 @@ exports.signUp = [
   }),
 ];
 
-/*
- * that is cloudinary choice
- * The maximum image file size for the free plan is 10 MB.
- */
-
-// set upload limitation for the curr project
-const limits = {
-  headerPairs: 2000,
-  fileSize: 1_000_000 * 10, // <= 10 mb
-  fields: 100,
-  parts: 100,
-  files: 100,
-};
-
-// you want a better file filter in a real application tho
-// file path => path.join(__dirname, "storage")
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "storage"));
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${file.originalname}`);
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: limits,
-}).single("upload_file");
-
-exports.postFileUpload = (req, res) => {
-  upload(req, res, async function (err) {
-    if (err) {
-      res.status(400).render("homeView/home", {
-        fileError: "yeah right this thing doesn't support more than 1 file",
-        errors: [],
-        logos: "i_uplo",
-        title: "i_uplo",
-      });
-    }
-
-    const mimetics = new Mimetics();
-    const filePath = req.file.path;
-    const buffer = fs.readFileSync(filePath);
-    const type = await mimetics.parseAsync(buffer);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-
-    if (!allowedTypes.includes(type.mime)) {
-      // delete the file, render to safe route
-      fs.rmSync(req.file.path);
-      return res.status(400).render("homeView/home", {
-        fileError: "file Should be an image such as jpeg, png, gif and webp",
-        errors: [],
-        logos: "i_uplo",
-        title: "i_uplo",
-      });
-    }
-
-    // file uploaded info
-    const {
-      // fieldname,
-      originalname,
-      // encoding,
-      // mimetype,
-      // destination,
-      // filename,
-      path,
-      size,
-    } = req.file;
-    await db.addFileToUser({
-      name: originalname,
-      url: `${path}${crypto.randomUUID()}`,
-      size: size,
-      uploadedAt: new Date(format(new Date(), "yyyy-MM-dd hh:mm")),
-      userId: req.user.id,
-    });
-    res.redirect("/");
-  });
-};
-
 const emptyFolderName = "should not be left empty";
 const folderLimit = "should be between 3 to 255 in length";
 
@@ -208,7 +129,9 @@ const folderNameValidationChain = [
     .notEmpty()
     .withMessage(`folder name ${emptyFolderName}`)
     .isLength({ min: 3, max: 255 })
-    .withMessage(`folder name ${folderLimit}`),
+    .withMessage(`folder name ${folderLimit}`)
+    .isAlphanumeric()
+    .withMessage("folder name should be alphanumeric"),
 ];
 
 exports.postCreateFolder = [
@@ -222,7 +145,8 @@ exports.postCreateFolder = [
         fileError: "",
         title: "i_uplo",
         logos: "i_uplo",
-        errors: errors.array(),
+        folderError: errors.array(),
+        folderErrorUpdate: [],
         openDialog: 1,
       });
     }
@@ -242,17 +166,27 @@ exports.postCreateFolder = [
 
 const folderId = "should not be left empty";
 const folderName = "should not be left empty";
+const folderRename = "should be alphanumeric";
 
 const updateFolderVc = [
   body("folderNameAct")
     .trim()
     .notEmpty()
-    .withMessage(`foldername ${folderName}`),
-  body("folderIdAct").trim().notEmpty().withMessage(`folderId ${folderId}`),
+    .withMessage(`foldername ${folderName}`)
+    .isAlphanumeric()
+    .withMessage(`folder rename ${folderRename}`),
+  body("folderIdAct")
+    .trim()
+    .notEmpty()
+    .withMessage(`folderId ${folderId}`)
+    .isAlphanumeric()
+    .withMessage(`folder rename ${folderRename}`),
   body("folderRename")
     .trim()
     .notEmpty()
-    .withMessage(`folderRename ${folderName}`),
+    .withMessage(`folder rename ${folderName}`)
+    .isAlphanumeric()
+    .withMessage(`folder rename ${folderRename}`),
 ];
 
 exports.postUpdateFolder = [
@@ -265,8 +199,9 @@ exports.postUpdateFolder = [
       return res.status(400).render("homeView/home", {
         logos: "i_uplo",
         title: "i_uplo",
-        folderError: errors.array(),
+        folderErrorUpdate: errors.array(),
         errors: [],
+        folderError: [],
       });
     }
 
