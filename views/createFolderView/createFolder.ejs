@@ -1,0 +1,27 @@
+<dialog class="create_folder_container">
+  <ul>
+    <% folderError.map(({ msg }) => { %>
+    <li><%= msg %></li>
+    <% }) %>
+  </ul>
+  <form action="/create-folder" method="post">
+    <div class="create_folder_inputs">
+      <ul>
+        <li>
+          <label for="folderName">Folder Name: </label>
+          <input
+            type="text"
+            name="folderName"
+            id="folderName"
+            min="3"
+            max="255"
+          />
+        </li>
+        <li>
+          <button class="close_create_folder" type="reset">Cancel</button>
+          <button type="submit">Add</button>
+        </li>
+      </ul>
+    </div>
+  </form>
+</dialog>
