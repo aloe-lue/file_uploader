@@ -1,0 +1,22 @@
+<div class="user_file">
+  <% if (currentUser.folder.length > 0) { %>
+  <h4>folder/s</h4>
+  <% } %> <% currentUser.folder.map(({ id, folderName}) => { %>
+  <div class="file_info">
+    <div class="folder_name">
+      <a href="folder/<%= folderName %>/read-file/id/<%= id %>"
+        ><%= folderName %></a
+      >
+    </div>
+
+    <div class="folder_action">
+      <button data-folderId="<%= id %>" data-folderName="<%= folderName %>">
+        UPDATE
+      </button>
+      <form action="/delete-folder/<%= id %>/<%= folderName %>" method="post">
+        <button>DELETE</button>
+      </form>
+    </div>
+  </div>
+  <% }) %>
+</div>
