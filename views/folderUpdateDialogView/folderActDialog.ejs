@@ -1,0 +1,40 @@
+<dialog class="folderAct">
+  <h4 class="folderName"></h4>
+  <ul>
+    <% folderErrorUpdate.map(({ msg }) => { %>
+    <li><%= msg %></li>
+    <% }) %>
+  </ul>
+  <form action="/update-folder" method="post">
+    <ul>
+      <li>
+        <label for="folderIdAct">Folder Id</label>
+        <input
+          type="text"
+          name="folderIdAct"
+          id="folderIdAct"
+          readonly
+          required
+          value=""
+        />
+      </li>
+      <li>
+        <label for="folderNameAct">Folder Name</label>
+        <input
+          type="text"
+          name="folderNameAct"
+          id="folderNameAct"
+          readonly
+          required
+          value=""
+        />
+      </li>
+      <li>
+        <label for="folderRename">Rename</label>
+        <input type="text" id="folderRename" name="folderRename" required />
+      </li>
+    </ul>
+    <button class="close_update" type="reset">Close</button>
+    <button type="submit" class="delete_folder">UPDATE</button>
+  </form>
+</dialog>
