@@ -16,24 +16,25 @@
     <div class="main_content">
       <header>
         <div class="main_header">
-          <div class="logos">
-            <h1><%= logos %></h1>
+          <div class="head_content">
+            <div class="logos">
+              <h1><%= logos %></h1>
+            </div>
+            <% if (currentUser) { %>
+
+            <div class="log_out"><%- include('../logOutView/logOut') %></div>
+            <% } %>
           </div>
         </div>
       </header>
 
-      <%- include('../folderUpdateDialogView/folderActDialog', { folderError })
-      %>
+      <% if (currentUser) { %> <%-
+      include('../folderUpdateDialogView/folderActDialog', { folderError }) %>
 
       <main class="main_main">
         <!-- a sign up form for ya  -->
-        <% if (currentUser) { %>
 
         <div class="main_container">
-          <div class="add_folder_or_file">
-            <button class="add_folder">Add Folder</button>
-          </div>
-
           <div class="user_content">
             <!-- greet logged user -->
             <%- include('../greetView/greet') %>
