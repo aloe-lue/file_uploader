@@ -11,7 +11,7 @@
     <div class="main_content">
       <header>
         <div class="main_header">
-          <div class="logos"><h1><%= logos %></h1></div>
+          <div class="logos_log_in"><h1><%= logos %></h1></div>
         </div>
       </header>
 
@@ -19,9 +19,9 @@
         <% if (currentUser) { %>
         <div>
           <p>
-            user #=> <%= currentUser.firstName %> <%= currentUser.lastName %> is
-            logged in or should i call you <%= currentUser.username %> or are
-            you lost? get back then <a href="/">here</a>
+            the user <%= currentUser.firstName %> <%= currentUser.lastName %> is
+            current logged in or should i call you <%= currentUser.username %>
+            or are you lost? get back then <a href="/">here</a>
           </p>
         </div>
         <% } else { %>
