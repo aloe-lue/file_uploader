@@ -2,12 +2,7 @@ const { body, param, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 const bcryptjs = require("bcryptjs");
 const db = require("../../prisma/query");
-const multer = require("multer");
-const path = require("node:path");
-const fs = require("node:fs");
-// test package
-const Mimetics = require("mimetics");
-const { format, formatISO } = require("date-fns");
+const { format } = require("date-fns");
 
 /**
  * renders the homepage
@@ -22,6 +17,7 @@ exports.home = (req, res) => {
     errors: [],
     openDialog: 0,
     folderError: [],
+    folderErrorDelete: [],
     folderErrorUpdate: [],
   });
 };
@@ -98,7 +94,7 @@ exports.signUp = [
 
     // render the same place when error occurs and show errors
     if (!errors.isEmpty()) {
-      res.status(400).render("homeView/home", {
+      return res.status(400).render("homeView/home", {
         title: "i_uplo",
         logos: "i_uplo",
         errors: errors.array(),
@@ -147,6 +143,7 @@ exports.postCreateFolder = [
         logos: "i_uplo",
         folderError: errors.array(),
         folderErrorUpdate: [],
+        folderErrorDelete: [],
         openDialog: 1,
       });
     }
@@ -197,13 +194,18 @@ exports.postUpdateFolder = [
     // that is if there was an error validating client forms
     if (!errors.isEmpty()) {
       return res.status(400).render("homeView/home", {
-        logos: "i_uplo",
+        fileError: "",
         title: "i_uplo",
-        folderErrorUpdate: errors.array(),
+        logos: "i_uplo",
         errors: [],
+        openDialog: 0,
         folderError: [],
+        folderErrorDelete: [],
+        folderErrorUpdate: errors.array(),
       });
     }
+
+    const { folderName, id } = req.params;
 
     await db.updateFolder({
       folderRename: req.body.folderRename,
@@ -217,13 +219,26 @@ exports.postUpdateFolder = [
 
 const idNec = "should be not be left empty";
 const folderNameEmpty = "shouldn't be left empty";
+const confirmDeleteFolder = "should match foldername";
+const confirmDeleteFolderAlphaNumeric = "should be alphanumeric";
 
 const deleteFolderVc = [
-  param("id").trim().notEmpty().withMessage(`Id #=> ${idNec}`),
-  param("folderName")
+  body("folderIdDelete").trim().notEmpty().withMessage(`Id #=> ${idNec}`),
+  body("folderNameDelete")
     .trim()
     .notEmpty()
-    .withMessage(`folderName ${folderNameEmpty}`),
+    .withMessage(`folderName ${folderNameEmpty}`)
+    .isAlphanumeric(),
+  body("confirm_delete")
+    .trim()
+    .notEmpty()
+    .withMessage(`confirm folder name ${idNec}`)
+    .isAlphanumeric()
+    .withMessage(`confirm folder name ${confirmDeleteFolderAlphaNumeric}`)
+    .custom((value, { req }) => {
+      return value === req.body.folderNameDelete;
+    })
+    .withMessage(`confirm delete folder ${confirmDeleteFolder}`),
 ];
 
 exports.postDeleteFolder = [
@@ -236,9 +251,11 @@ exports.postDeleteFolder = [
         // this should be global but i think that would be a bad idea
         logos: "i_uplo",
         title: "i_uplo",
-        folderError: errors.array(),
+        folderErrorDelete: errors.array(),
+        folderErrorUpdate: [],
         errors: [],
         fileError: [],
+        folderError: [],
       });
     }
 
