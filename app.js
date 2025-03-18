@@ -7,6 +7,7 @@ const path = require("node:path");
 const homeRouter = require("./routes/homeRouter/homeRouter");
 const logInRouter = require("./routes/logInRouter/logInRouter");
 const logOutRouter = require("./routes/logOutRouter/logOutRouter");
+const folderRouter = require("./routes/folderRouter/folderRouter");
 
 // views config
 const viewpath = path.join(__dirname, "views");
@@ -52,7 +53,7 @@ passport.deserializeUser(localStrategy.deserializer);
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
-  console.log(req.session.message);
+  // console.log(req.session.message);
   next();
 });
 
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 app.use("/", homeRouter);
 app.use("/log-in", logInRouter);
 app.use("/log-out", logOutRouter);
+app.use("/folder", folderRouter);
 
 app.get((error, req, res, next) => {
   console.error(err);
