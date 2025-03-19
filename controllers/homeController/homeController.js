@@ -205,8 +205,6 @@ exports.postUpdateFolder = [
       });
     }
 
-    const { folderName, id } = req.params;
-
     await db.updateFolder({
       folderRename: req.body.folderRename,
       folderName: req.body.folderNameAct,
@@ -261,8 +259,8 @@ exports.postDeleteFolder = [
 
     // tell db delete this folder with this info
     await db.deleteFolder({
-      folderName: req.params.folderName,
-      id: Number(req.params.id),
+      folderName: req.body.folderNameDelete,
+      id: Number(req.body.folderIdDelete),
       userId: Number(req.user.id),
     });
     res.redirect("/");
