@@ -5,6 +5,12 @@ const db = require("../../prisma/query");
 const { format } = require("date-fns");
 
 /**
+ * todo: you want to use cloudinary in this case to delete files that are related to the folder
+ */
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({ secure: true }).cloud_name;
+
+/**
  * renders the homepage
  * @param {*} req
  * @param {*} res
@@ -256,6 +262,10 @@ exports.postDeleteFolder = [
         folderError: [],
       });
     }
+
+    // const folderFiles = req.user;
+    // i couldn't do it right now i'm limited of time to finish
+    // await cloudinary.api.delete_resources(folderFiles, { invalidate: true });
 
     // tell db delete this folder with this info
     await db.deleteFolder({
