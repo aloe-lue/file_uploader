@@ -4,13 +4,21 @@ const cloudinary = require("cloudinary").v2;
 cloudinary.config().cloud_name;
 
 (async () => {
+  const pictures = [
+    "efisojnxltcrqgs7avqq",
+    "vaztlzlasfybreozokbs",
+    "se2jf7khfhgjkuqhawzj",
+  ];
+
   const uploadResult = await cloudinary.uploader
-    .upload("cloudinary/19692a5c-b026-492e-ab52-ce873f83af57", {
+    .destroy(pictures[0], {
       resource_type: "image",
-      overwrite: true,
+      invalidate: true,
     })
     .then((result) => {
-      console.log("successs", result);
+      console.log("success", result);
     })
-    .catch((err) => console.log("error", err));
+    .catch((error) => {
+      console.error(error);
+    });
 })();
