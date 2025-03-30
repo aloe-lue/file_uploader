@@ -263,16 +263,29 @@ exports.postDeleteFolder = [
       });
     }
 
-    // const folderFiles = req.user;
-    // i couldn't do it right now i'm limited of time to finish
-    // await cloudinary.api.delete_resources(folderFiles, { invalidate: true });
-
-    // tell db delete this folder with this info
-    await db.deleteFolder({
-      folderName: req.body.folderNameDelete,
-      id: Number(req.body.folderIdDelete),
-      userId: Number(req.user.id),
+    // finds all the records that is from the folder and delete it all from cloudinary
+    const { folderNameDelete, folderIdDelete } = req.body;
+    const folderWithFile = await db.findFolderByNameAndId({
+      folderName: folderNameDelete,
+      id: Number(folderIdDelete),
     });
+
+    const options = {
+      invalidate: true,
+      resource_type: "image",
+    };
+
+    await cloudinary.api.delete_resources(
+      folderWithFile.file.map(({ publicId }) => publicId),
+      options
+    );
+
+    // delete from db first the files that the folder contains then delete the folder
+    await db.deleteFolder({
+      folderName: folderNameDelete,
+      id: Number(folderIdDelete),
+    });
+
     res.redirect("/");
   }),
 ];
