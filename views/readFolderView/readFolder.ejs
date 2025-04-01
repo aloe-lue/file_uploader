@@ -1,22 +1,54 @@
-<div class="user_file">
-  <% if (currentUser.folder.length > 0) { %>
-  <h4>folder/s</h4>
-  <% } %> <% currentUser.folder.map(({ id, folderName}) => { %>
-  <div class="file_info">
-    <div class="folder_name">
-      <a href="folder/<%= folderName %>/read-file/id/<%= id %>"
-        ><%= folderName %></a
-      >
-    </div>
-
-    <div class="folder_action">
-      <button data-folderId="<%= id %>" data-folderName="<%= folderName %>">
-        UPDATE
-      </button>
-      <form action="/delete-folder/<%= id %>/<%= folderName %>" method="post">
-        <button>DELETE</button>
-      </form>
-    </div>
+<div class="user_folder">
+  <div class="add_folder_or_file">
+    <button class="add_folder">Add Folder</button>
   </div>
+  <% if (currentUser.folder.length > 0) { %>
+
+  <div class="folder_add_folder">
+    <% if (currentUser.folder.length > 1) { %>
+    <h4 class="folder_s">folders</h4>
+
+    <% } else { %>
+    <h4 class="folder_s">folder</h4>
+
+    <% } %>
+  </div>
+
+  <div class="folder_count" style="text-align: end">action</div>
+
+  <% } %> <% currentUser.folder.map(({ id, folderName}) => { %>
+
+  <!-- update folder form dialog -->
+  <%- include('../folderUpdateDialogView/folderActDialog', { id, folderName })
+  %>
+
+  <!-- delete folder form dialog -->
+  <%- include('../folderDeleteDialogView/folderDeleteDialog', { id, folderName
+  }) %>
+
+  <div class="folder_info">
+    <a
+      class="folder_link"
+      href="/folder/<%= folderName %>/read-file/id/<%= id %>"
+    >
+      <div class="folder_name"><%= folderName %></div>
+    </a>
+
+    <button
+      class="update_folder"
+      data-folderId="<%= id %>"
+      data-folderName="<%= folderName %>"
+    >
+      Update
+    </button>
+    <button
+      class="delete_folder"
+      data-folderId="<%= id %>"
+      data-folderName="<%= folderName %>"
+    >
+      Delete
+    </button>
+  </div>
+
   <% }) %>
 </div>
