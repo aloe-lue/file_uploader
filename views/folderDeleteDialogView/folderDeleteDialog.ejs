@@ -1,0 +1,40 @@
+<dialog class="deleteFolderDialog">
+  <h4 class="folderName"></h4>
+  <ul>
+    <% folderErrorDelete.map(({ msg }) => { %>
+    <li><%= msg %></li>
+    <% }) %>
+  </ul>
+  <form action="/delete-folder" method="post">
+    <ul>
+      <li>
+        <label for="folderIdDelete">Folder Id</label>
+        <input
+          type="text"
+          name="folderIdDelete"
+          id="folderIdDelete"
+          readonly
+          required
+          value="<%= id %>"
+        />
+      </li>
+      <li>
+        <label for="folderNameDelete">Folder Name</label>
+        <input
+          type="text"
+          name="folderNameDelete"
+          id="folderNameDelete"
+          readonly
+          required
+          value="<%= folderName %>"
+        />
+      </li>
+      <li>
+        <label for="confirm_delete">Confirm Folder Name</label>
+        <input type="text" id="confirm_delete" name="confirm_delete" required />
+      </li>
+    </ul>
+    <button class="close_delete" type="reset">Close</button>
+    <button type="submit" class="delete_folder">Delete</button>
+  </form>
+</dialog>
