@@ -165,6 +165,7 @@ async function updateFileToFolder({
   size,
   publicId,
   uploadedAt,
+  randomName,
 }) {
   await prisma.folder.update({
     where: {
@@ -180,6 +181,7 @@ async function updateFileToFolder({
           size: size,
           uploadedAt: uploadedAt,
           publicId: publicId,
+          randomName: randomName,
         },
       },
     },
@@ -200,6 +202,27 @@ async function readFileFolder({ folderName, folderId }) {
   return files;
 }
 
+async function deleteFile({ publicId, id }) {
+  await prisma.file.delete({
+    where: {
+      id: id,
+      publicId: publicId,
+    },
+  });
+}
+
+// rename the name of the file
+async function updateFile({ id, rename }) {
+  await prisma.file.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name: rename,
+    },
+  });
+}
+
 module.exports = {
   createUser,
   findUserByUsername,
@@ -212,4 +235,6 @@ module.exports = {
   deleteFolder,
   updateFileToFolder,
   readFileFolder,
+  deleteFile,
+  updateFile,
 };
