@@ -44,11 +44,16 @@ model folder {
 // root file
 
 model file {
-  id         Int      @unique @default(autoincrement())
-  name       String   @db.VarChar(255)
-  url        String   @unique @db.VarChar(255)
+  id         Int       @unique @default(autoincrement())
+  name       String    @db.VarChar(255)
+  // cloudinary name
+  randomName String?   @db.VarChar(255)
+  url        String    @unique @db.VarChar(255)
   size       Int
   uploadedAt DateTime
-  folder     folder   @relation("folderHasFile", fields: [folderId], references: [id])
+  folder     folder    @relation("folderHasFile", fields: [folderId], references: [id])
   folderId   Int
+  // add public_id as a data for the file to use destructive operation such as delete and update
+  publicId   String?   @db.VarChar(255)
+  updatedAt  DateTime?
 }
