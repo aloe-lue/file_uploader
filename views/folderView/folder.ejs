@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('../titleView/title', { title: 'i_uplo' }) %>
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/folderScript.js" defer></script>
+  </head>
+  <body>
+    <div class="main_content">
+      <header>
+        <div class="main_header">
+          <div class="headContent">
+            <div class="h1"><h1>i_uplo</h1></div>
+          </div>
+        </div>
+      </header>
+      <main class="folderMainContent">
+        <div class="folderContent">
+          <div class="folderName">
+            <h2><%= folderName %></h2>
+          </div>
+          <div class="open_dialog">
+            <button class="show_dialog">uplod</button>
+          </div>
+          <div class="upload_file">
+            <dialog class="upload_file_container">
+              <div class="show_upload_err"><%= fileError %></div>
+              <form
+                action="/folder/<%= folderName %>/upload-file/id/<%= folderId %>"
+                enctype="multipart/form-data"
+                method="post"
+              >
+                <div class="upload_file_inputs">
+                  <ul>
+                    <li>
+                      <label for="upload_folder_file">Choose file: </label
+                      ><input
+                        type="file"
+                        id="upload_folder_file"
+                        name="upload_folder_file"
+                      />
+                    </li>
+                    <li>
+                      <button class="close_file_upload" type="reset">
+                        Close</button
+                      ><button type="submit" class="btn_uplo">Upload</button>
+                    </li>
+                  </ul>
+                </div>
+              </form>
+            </dialog>
+          </div>
+          <div class="folderFiles">
+            <% folderFiles.map(({ id, name, url, size, uploadedAt, randomName,
+            format, publicId })=> { %>
+            <div class="folderFile">
+              <a href="<%= url %>" target="_blank"><%= name %></a> <%= size %>
+              <%= uploadedAt %>
+            </div>
+            <form
+              action="/folder/<%= folderName %>/download-file/id/<%= folderId %>"
+              method="get"
+            >
+              <div class="fileUrl">
+                <label for="fileUrl" style="display: none">File Url </label>
+                <input
+                  type="text"
+                  name="fileUrl"
+                  id="fileUrl"
+                  value="<%= url %>"
+                  readonly
+                  style="display: none"
+                />
+              </div>
+              <div class="download">
+                <button type="submit">Download</button>
+              </div>
+            </form>
+            <%- include('../deleteFileView/deleteFile', { publicId, name, id })
+            %> <%- include('../updateFileView/updateFile', { name, id }) %>
+            <button class="showDeleteFileDialog">Delete</button>
+            <button class="showUpdateFileDialog">Update</button>
+            <% }) %>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
