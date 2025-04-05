@@ -1,0 +1,46 @@
+<dialog class="updateFileContainer">
+  <ul>
+    <!-- check if there's an error -->
+    <% if (updateFileError) { %>
+    <!-- show update error  -->
+    <% updateFileError.map(({ msg }) => { %>
+    <li><%= msg %></li>
+    <% }) %> <% } %>
+  </ul>
+  <form
+    action="/folder/<%= folderName %>/update-file/id/<%= folderId %>"
+    method="post"
+  >
+    <div class="updateFileInputs">
+      <ul>
+        <li>
+          <div class="fileName"><h4><%= name %></h4></div>
+        </li>
+        <li style="display: none">
+          <label for="fileIdUpdate">File Id</label
+          ><input
+            type="number"
+            id="fileIdUpdate"
+            name="fileIdUpdate"
+            required
+            readonly
+            value="<%= id %>"
+          />
+        </li>
+        <li>
+          <label for="fileRename">File Rename</label
+          ><input
+            type="text"
+            required="required"
+            id="fileRename"
+            name="fileRename"
+          />
+        </li>
+        <li>
+          <button class="cancelFileUpdateBtn" type="reset">Cancel</button
+          ><button type="submit">Rename</button>
+        </li>
+      </ul>
+    </div>
+  </form>
+</dialog>
