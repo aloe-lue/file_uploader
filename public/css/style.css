@@ -1,0 +1,143 @@
+*,
+*::before,
+*::after {
+  /* background-color: #00ff0010;
+  outline: 1px solid #00000010; */
+  /* fonts */
+  --fallback-ff: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  font-family: var(--fallback-ff);
+  color: rgb(80, 79, 82);
+}
+header {
+  box-shadow: 0 5px 5px #00000020;
+  margin-bottom: 1rem;
+}
+
+.main_header,
+.main_container,
+.sign_up_form_container,
+.log_in_content,
+.folderMainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.main_header {
+  padding: 10px;
+}
+
+.logos_log_in,
+.head_content,
+.user_content,
+.folderContent,
+.h1,
+form[action="/log-in"],
+form[action="/sign-up"] {
+  max-width: 730px;
+  margin: 0 auto;
+}
+
+.folder_add_folder,
+.head_content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+ul.log_in_inputs {
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.folder_add_folder {
+  border-bottom: 10px solid transparent;
+}
+h1,
+h2,
+h4 {
+  font-size: clamp(14px, 5vw, 18px);
+  letter-spacing: 1px;
+  line-height: 150%;
+}
+h3 {
+  color: rgb(111, 110, 114);
+}
+
+.greet_user {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+  border-bottom: 10px solid transparent;
+}
+
+button.update_folder,
+button.delete_folder,
+button[type="reset"],
+button[type="submit"],
+button.add_folder,
+button.log_out {
+  font-size: clamp(14px, 5vw, 16px);
+  border: none;
+  box-shadow: 0 5px 5px #00000020;
+  background-color: white;
+  font-family: var(--fallback-ff);
+}
+
+.folder_info {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.user_folder {
+  display: flex;
+  flex-direction: column;
+}
+
+.folder_link {
+  flex: 1;
+  text-decoration: none;
+  box-shadow: 0px 5px 5px #00000020;
+  padding: 05px;
+  color: rgb(0, 15, 31);
+  border-left: 12px solid palevioletred;
+}
+
+dialog.show_on_add,
+dialog.create_folder_container,
+dialog.folderAct,
+dialog.deleteFolderDialog {
+  border: none;
+  box-shadow: 0 5px 5px #00000020;
+}
+.action > button {
+  border: none;
+  box-shadow: 0 5px 5px #00000020;
+  padding: calc(100px * 0.1) calc(100px * 0.6);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="file"] {
+  display: block;
+  border: none;
+  box-shadow: 0 5px 5px #00000020;
+  font-size: clamp(14px, 5vw, 16px);
+  padding: calc(50px * 0.1) calc(50px * 0.1);
+  margin: calc(40px * 0.3) calc(40px * 0.1);
+  background-color: #e9e9e9;
+  letter-spacing: 1px;
+}
+
+input:focus-visible {
+  outline: 2px solid #00000060;
+}
+ul.sign_up_input {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  justify-content: center;
+}
