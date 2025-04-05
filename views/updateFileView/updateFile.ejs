@@ -1,11 +1,10 @@
 <dialog class="updateFileContainer">
   <ul>
     <!-- check if there's an error -->
-    <% if (updateFileError) { %>
     <!-- show update error  -->
     <% updateFileError.map(({ msg }) => { %>
     <li><%= msg %></li>
-    <% }) %> <% } %>
+    <% }) %>
   </ul>
   <form
     action="/folder/<%= folderName %>/update-file/id/<%= folderId %>"
