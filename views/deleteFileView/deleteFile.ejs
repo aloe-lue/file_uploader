@@ -1,0 +1,38 @@
+<dialog class="deleteFileContainer">
+  <form
+    action="/folder/<%= folderName %>/delete-file/id/<%= folderId %>"
+    method="post"
+  >
+    <div class="deleteFileInputs">
+      <ul>
+        <li style="display: none">
+          <label for="publicId">Public ID</label>
+          <input
+            type="text"
+            name="publicId"
+            id="publicId"
+            required
+            readonly
+            value="<%= publicId %>"
+          />
+        </li>
+        <li style="display: none">
+          <label for="fileIdDelete">File Id</label
+          ><input
+            type="text"
+            id="fileIdDelete"
+            name="fileIdDelete"
+            required="required"
+            readonly="readonly"
+            value="<%= id %>"
+          />
+        </li>
+        <li><h4>are you sure you want to delete?</h4></li>
+        <li>
+          <button type="reset" class="closeDeleteFileBtn">Cancel</button>
+          <button type="submit" class="deleteFileBtn">Delete Anyway</button>
+        </li>
+      </ul>
+    </div>
+  </form>
+</dialog>
