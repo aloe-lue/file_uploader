@@ -57,8 +57,11 @@
             <% folderFiles.map(({ id, name, url, size, uploadedAt, randomName,
             format, publicId })=> { %>
             <div class="folderFile">
-              <a href="<%= url %>" target="_blank"><%= name %></a> <%= size %>
-              <%= uploadedAt %>
+              <div class="filename">
+                filename: <a href="<%= url %>" target="_blank"><%= name %></a>
+              </div>
+              <div class="fileSize">size: <%= size %> Bytes</div>
+              <div class="uploadedAt">uploaded at: <%= uploadedAt %></div>
             </div>
             <form
               action="/folder/<%= folderName %>/download-file/id/<%= folderId %>"
@@ -79,8 +82,11 @@
                 <button type="submit">Download</button>
               </div>
             </form>
-            <%- include('../deleteFileView/deleteFile', { publicId, name, id })
-            %> <%- include('../updateFileView/updateFile', { name, id }) %>
+            <%- include('../deleteFileView/deleteFile', { publicId, name, id
+            })%>
+            <!-- update file name dialog -->
+            <%- include('../updateFileView/updateFile', { name, id,
+            updateFileError, }) %>
             <button class="showDeleteFileDialog">Delete</button>
             <button class="showUpdateFileDialog">Update</button>
             <% }) %>
