@@ -50,6 +50,9 @@ const handleEmptyFile = function (req, res, next) {
       });
 
       return res.status(400).render(`folderView/folder`, {
+        updateFileError: [],
+        deleteFileError: [],
+        fileUrlError: [],
         fileError: "it should not be empty nor a file greater than 10mb",
         folderName: req.params.folder,
         folderId: req.params.id,
@@ -88,6 +91,7 @@ const handleFakeMime = asyncHandler(async (req, res, next) => {
     });
 
     return res.status(400).render(`folderView/folder`, {
+      updateFileError: [],
       fileError: "file format should be jpeg/jpg, png, gif or webp",
       folderName: req.params.folder,
       folderId: req.params.id,
@@ -186,11 +190,16 @@ exports.getReadFolderFile = [
       folderId: Number(req.params.id),
     });
 
-    res.render("folderView/folder", {
+    return res.status(200).render("folderView/folder", {
+      updateFileError: [],
+      deleteFileError: [],
       fileError: "",
       folderName: req.params.folder,
       folderId: req.params.id,
       folderFiles: folderFiles.file,
+      errors: [],
+      logos: "i_uplo",
+      title: "i_uplo",
     });
   }),
 ];
@@ -231,6 +240,9 @@ exports.postUpdateFile = [
         folderName: req.params.folder,
         folderId: req.params.id,
         folderFiles: folderFiles.file,
+        errors: [],
+        logos: "i_uplo",
+        title: "i_uplo",
       });
     }
 
@@ -270,12 +282,16 @@ exports.postDeleteFile = [
       });
       // the input has been modified
       return res.status(400).render("folderView/folder", {
-        fileUrlError: errors.array(),
         deleteFileError: errors.array(),
+        updateFileError: [],
+        fileUrlError: [],
         fileError: "",
         folderName: req.params.folder,
         folderId: req.params.id,
         folderFiles: folderFiles.file,
+        errors: [],
+        logos: "i_uplo",
+        title: "i_uplo",
       });
     }
 
@@ -315,11 +331,15 @@ exports.getDownloadFile = [
       });
       return res.status(400).render("folderView/folder", {
         fileUrlError: errors.array(),
-        fileError: "",
+        updateFileError: [],
         deleteFileError: [],
+        fileError: "it should not be empty nor a file greater than 10mb",
         folderName: req.params.folder,
         folderId: req.params.id,
         folderFiles: folderFiles.file,
+        errors: [],
+        logos: "i_uplo",
+        title: "i_uplo",
       });
     }
 
