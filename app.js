@@ -2,12 +2,17 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const path = require("node:path");
+const helmet = require("helmet");
 
 // routes
 const homeRouter = require("./routes/homeRouter/homeRouter");
 const logInRouter = require("./routes/logInRouter/logInRouter");
 const logOutRouter = require("./routes/logOutRouter/logOutRouter");
 const folderRouter = require("./routes/folderRouter/folderRouter");
+const errorRouter = require("./routes/errorRouter/errorRouter");
+
+// use helmet for security
+app.use(helmet());
 
 // views config
 const viewpath = path.join(__dirname, "views");
@@ -62,6 +67,7 @@ app.use("/", homeRouter);
 app.use("/log-in", logInRouter);
 app.use("/log-out", logOutRouter);
 app.use("/folder", folderRouter);
+app.use("*", errorRouter);
 
 app.get((error, req, res, next) => {
   console.error(err);
